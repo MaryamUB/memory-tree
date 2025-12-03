@@ -1,14 +1,14 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #06243C;
-    color: white;
+    background: white;     /* pure white page */
+    color: black;          /* text normal */
 }
 
 .title {
     text-align: center;
     margin-top: 20px;
-    font-size: 36px;
+    font-size: 32px;
 }
 
 #tree-container {
