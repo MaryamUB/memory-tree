@@ -1,7 +1,7 @@
 const API_BASE = "https://digitalcollections-accept.library.maastrichtuniversity.nl/api";
 
-const PERSON_ITEMSET = 60514;   // persons
-const OBJECT_ITEMSET = 60518;   // objects
+const PERSON_ITEMSET = 60514;
+const OBJECT_ITEMSET = 60518;
 
 async function fetchItemSet(id) {
     const url = `${API_BASE}/items?item_set_id=${id}&per_page=500`;
@@ -13,21 +13,11 @@ async function buildTree() {
     const persons = await fetchItemSet(PERSON_ITEMSET);
     const objects = await fetchItemSet(OBJECT_ITEMSET);
 
-    console.log("Persons:", persons);
-    console.log("Objects:", objects);
-
-    if (!persons.length) {
-        document.body.innerHTML += "<p>No persons found.</p>";
-        return;
-    }
-
-    // Person nodes
     const personNodes = persons.map(p => ({
         id: p["o:id"],
         name: p["o:title"]
     }));
 
-    // Object nodes
     const objectNodes = objects.map(o => {
         const owned = o["schema:ownedFrom"];
         const personId = owned && owned.length ? owned[0]["value_resource_id"] : null;
@@ -38,7 +28,6 @@ async function buildTree() {
         };
     });
 
-    // Build D3 tree structure
     const treeData = {
         name: "Digital Memory Tree",
         children: personNodes.map(person => ({
@@ -66,7 +55,6 @@ function renderTree(data) {
     const root = d3.hierarchy(data);
     treeLayout(root);
 
-    // Links
     svg.selectAll("path")
         .data(root.links())
         .enter()
@@ -79,7 +67,6 @@ function renderTree(data) {
             .y(d => d.x)
         );
 
-    // Nodes
     const node = svg.selectAll("g.node")
         .data(root.descendants())
         .enter()
