@@ -1,40 +1,33 @@
-body {
-    margin: 0;
-    font-family: "Arial", sans-serif;
-    background-color: #06243C; /* deep navy */
-    color: white;
-    overflow-x: hidden;
-}
-
-/* TOP HERO IMAGE */
+/* TOP BANNER – thin, semi-transparent */
 .hero-top {
     width: 100%;
-    height: 260px;
-    background-image: url("banner-top.png"); /* add this file to repo */
+    height: 130px;                 /* narrow */
+    background-image: url("banner-top.png");
     background-size: cover;
     background-position: center;
+    opacity: 0.35;                 /* transparent */
 }
 
-/* BOTTOM FOOTER IMAGE */
+/* BOTTOM BANNER – thin, semi-transparent */
 .hero-bottom {
     width: 100%;
-    height: 200px;
-    background-image: url("banner-bottom.png"); /* add this file to repo */
+    height: 130px;                 /* narrow */
+    background-image: url("banner-bottom.png");
     background-size: cover;
     background-position: center;
+    opacity: 0.35;
     margin-top: 40px;
 }
 
-/* TITLE */
-.title {
-    text-align: center;
-    margin: 20px 0;
-    font-weight: 700;
-    font-size: 36px;
-    color: #ffffff;
+/* Page background stays clean */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #06243C;
+    color: white;
 }
 
-/* TREE CONTAINER */
+/* Keep tree centered */
 #tree-container {
     width: 100%;
     display: flex;
@@ -42,9 +35,8 @@ body {
     margin-top: 20px;
 }
 
-/* SVG SIZE CONTROL → MAKE TREE SMALLER */
+/* Tree size stays normal */
 svg {
-    width: 900px;     /* smaller */
-    height: 650px;    /* smaller */
-    background: transparent;
+    width: 1200px;
+    height: 750px;
 }
