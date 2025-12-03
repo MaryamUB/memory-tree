@@ -1,24 +1,29 @@
 (async function () {
     const apiRoot = "https://digitalcollections-accept.library.maastrichtuniversity.nl/api";
-    const itemSetId = 60514; // History Clinic item set
+    const itemSetId = 60514; // History Clinic item set (ACCEPT)
 
-    // 1. Fetch all people from the item set
+    // 1. Fetch all people from that item set
     const peopleResp = await fetch(`${apiRoot}/items?item_set_id=${itemSetId}`);
     const people = await peopleResp.json();
 
     const rootData = { name: "Digital Memory Tree", children: [] };
 
     for (const person of people) {
+        const personId = person["o:id"]; // numeric ID used in the filter
+
         const personNode = {
             name: person["o:title"] || "Unnamed",
             url: person["@id"].replace("/api", ""),
             children: []
         };
 
-        // 2. Find objects linked to person via schema:about
+        // 2. Find ONLY objects whose schema:about points to THIS person
+        //    Here we use type=eq and the numeric person ID.
         const relatedUrl =
-            `${apiRoot}/items?property[0][joiner]=and&property[0][property]=schema:about`
-            + `&property[0][type]=resource&property[0][text]=${encodeURIComponent(person["@id"])}`;
+            `${apiRoot}/items?property[0][joiner]=and` +
+            `&property[0][property]=schema:about` +
+            `&property[0][type]=eq` +
+            `&property[0][text]=${personId}`;
 
         const relatedResp = await fetch(relatedUrl);
         const relatedObjects = await relatedResp.json();
@@ -34,8 +39,9 @@
     }
 
     // 3. Render the D3 tree
-    const width = document.getElementById("tree-container").clientWidth;
-    const height = document.getElementById("tree-container").clientHeight;
+    const container = document.getElementById("tree-container");
+    const width = container.clientWidth;
+    const height = container.clientHeight;
 
     const svg = d3.select("#tree-container")
         .append("svg")
@@ -79,7 +85,10 @@
     node.append("text")
         .attr("dx", 12)
         .attr("dy", 4)
-        .text(d => d.data.name)
+        .text(d => {
+            const name = d.data.name || "";
+            return name.length > 40 ? name.slice(0, 37) + "…" : name;
+        })
         .style("cursor", d => d.data.url ? "pointer" : "default")
         .on("click", (e, d) => {
             if (d.data.url) window.open(d.data.url, "_blank");
