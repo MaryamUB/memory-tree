@@ -1,38 +1,50 @@
 body {
-  font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 20px;
-  background: #fafafa;
+    margin: 0;
+    font-family: "Arial", sans-serif;
+    background-color: #06243C; /* deep navy */
+    color: white;
+    overflow-x: hidden;
 }
 
+/* TOP HERO IMAGE */
+.hero-top {
+    width: 100%;
+    height: 260px;
+    background-image: url("banner-top.png"); /* add this file to repo */
+    background-size: cover;
+    background-position: center;
+}
+
+/* BOTTOM FOOTER IMAGE */
+.hero-bottom {
+    width: 100%;
+    height: 200px;
+    background-image: url("banner-bottom.png"); /* add this file to repo */
+    background-size: cover;
+    background-position: center;
+    margin-top: 40px;
+}
+
+/* TITLE */
 .title {
-  text-align: center;
-  margin-bottom: 25px;
-  color: #333;
-  font-size: 26px;
+    text-align: center;
+    margin: 20px 0;
+    font-weight: 700;
+    font-size: 36px;
+    color: #ffffff;
 }
 
+/* TREE CONTAINER */
 #tree-container {
-  width: 100%;
-  height: 700px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  background: #fff;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
 }
 
-.node circle {
-  cursor: pointer;
-  stroke: #333;
-  stroke-width: 1px;
-}
-
-.node text {
-  font-size: 14px;
-  fill: #333;
-}
-
-.link {
-  fill: none;
-  stroke: #aaa;
-  stroke-width: 1.5px;
+/* SVG SIZE CONTROL → MAKE TREE SMALLER */
+svg {
+    width: 900px;     /* smaller */
+    height: 650px;    /* smaller */
+    background: transparent;
 }
