@@ -1,47 +1,51 @@
 const API_BASE = "https://digitalcollections-accept.library.maastrichtuniversity.nl/api";
-const ITEMSET_ID = 60514;
 
-// Fetch all items in the item set
-async function fetchItems() {
-    const url = `${API_BASE}/items?item_set_id=${ITEMSET_ID}&per_page=500`;
+const PERSON_ITEMSET = 60514;   // persons
+const OBJECT_ITEMSET = 60518;   // objects
+
+async function fetchItemSet(id) {
+    const url = `${API_BASE}/items?item_set_id=${id}&per_page=500`;
     const response = await fetch(url);
     return await response.json();
 }
 
 async function buildTree() {
-    const items = await fetchItems();
+    const persons = await fetchItemSet(PERSON_ITEMSET);
+    const objects = await fetchItemSet(OBJECT_ITEMSET);
 
-    // Separate persons and objects
-    const persons = [];
-    const objects = [];
+    console.log("Persons:", persons);
+    console.log("Objects:", objects);
 
-    items.forEach(item => {
-        const ownedFrom = item["schema:ownedFrom"];
+    if (!persons.length) {
+        document.body.innerHTML += "<p>No persons found.</p>";
+        return;
+    }
 
-        if (ownedFrom && ownedFrom.length > 0) {
-            // This is an object
-            objects.push({
-                id: item["o:id"],
-                label: item["o:title"],
-                personId: ownedFrom[0]["value_resource_id"]
-            });
-        } else {
-            // This is a person
-            persons.push({
-                id: item["o:id"],
-                label: item["o:title"]
-            });
-        }
+    // Person nodes
+    const personNodes = persons.map(p => ({
+        id: p["o:id"],
+        name: p["o:title"]
+    }));
+
+    // Object nodes
+    const objectNodes = objects.map(o => {
+        const owned = o["schema:ownedFrom"];
+        const personId = owned && owned.length ? owned[0]["value_resource_id"] : null;
+        return {
+            id: o["o:id"],
+            name: o["o:title"],
+            personId
+        };
     });
 
-    // Build hierarchical structure
+    // Build D3 tree structure
     const treeData = {
         name: "Digital Memory Tree",
-        children: persons.map(person => ({
-            name: person.label,
-            children: objects
+        children: personNodes.map(person => ({
+            name: person.name,
+            children: objectNodes
                 .filter(obj => obj.personId === person.id)
-                .map(obj => ({ name: obj.label }))
+                .map(obj => ({ name: obj.name }))
         }))
     };
 
@@ -52,7 +56,7 @@ function renderTree(data) {
     const width = 1400;
     const height = 900;
 
-    const svg = d3.select("svg")
+    const svg = d3.select("#tree")
         .attr("width", width)
         .attr("height", height)
         .append("g")
@@ -60,7 +64,6 @@ function renderTree(data) {
 
     const treeLayout = d3.tree().size([height, width - 300]);
     const root = d3.hierarchy(data);
-
     treeLayout(root);
 
     // Links
@@ -85,7 +88,7 @@ function renderTree(data) {
         .attr("transform", d => `translate(${d.y}, ${d.x})`);
 
     node.append("circle")
-        .attr("r", d => d.depth === 0 ? 10 : d.depth === 1 ? 6 : 4)
+        .attr("r", d => d.depth === 0 ? 10 : d.depth === 1 ? 7 : 4)
         .attr("fill", d => d.depth === 0 ? "#4682b4" : d.depth === 1 ? "#4CAF50" : "#FFC107");
 
     node.append("text")
